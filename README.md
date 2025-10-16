@@ -6,18 +6,21 @@ A full-stack web application for travel booking, inspired by Airbnb. This is a s
 
 **2. Key features**
 Tripook provides a seamless experience for three main user roles: Travelers, Hosts, and Administrators.
+
 **- For Travelers (Users)**
   - Intuitive Search & Filtering: Easily find accommodations or tours by location, date, price, and number of guests.
   - Interactive Map View: Visualize all available services on an interactive map, powered by OpenStreetMap.
   - Seamless Booking System: A straightforward booking process with a simulated payment flow.
   - User Profiles & History: Manage personal information and view past and upcoming trips.
   - Reviews & Ratings: Leave authentic feedback on services after a completed trip to help the community.
+
 **- For Hosts (Service Providers)**
   - Full Listing Management (CRUD): Easily create, update, and manage service listings with detailed descriptions and photos.
   - Dynamic Calendar: Manage availability and block out dates that are unavailable.
   - Booking Management: View, confirm, or decline booking requests from travelers.
   - Analytics Dashboard: Get insights into revenue, booking rates, and views to optimize listings.
   - Price Suggestion Tool: A simple tool to suggest price adjustments for weekends and holidays.
+
 **- For Administrators**
   - User Management: Oversee all user accounts with the ability to manage roles and permissions.
   - Service Moderation: Approve or reject new listings to ensure quality and safety on the platform.
