@@ -1,0 +1,113 @@
+# ====================================
+# Docker Compose for Tripook Development
+# ====================================
+
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: tripook-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: tripook_dev_db
+      POSTGRES_USER: tripook_dev_user
+      POSTGRES_PASSWORD: tripook_dev_password
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init:/docker-entrypoint-initdb.d
+    networks:
+      - tripook-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tripook_dev_user -d tripook_dev_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Backend Service
+  backend:
+    build:
+      context: ./tripook-backend
+      dockerfile: Dockerfile
+    container_name: tripook-backend
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/tripook_dev_db
+      SPRING_DATASOURCE_USERNAME: tripook_dev_user
+      SPRING_DATASOURCE_PASSWORD: tripook_dev_password
+      JAVA_OPTS: "-Xmx1g -Xms512m"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - tripook-network
+    volumes:
+      - backend_logs:/app/logs
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # Frontend Service
+  frontend:
+    build:
+      context: ./tripook-frontend
+      dockerfile: Dockerfile
+    container_name: tripook-frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - tripook-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  # pgAdmin for database management (Optional)
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: tripook-pgadmin
+    restart: unless-stopped
+    ports:
+      - "5050:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@tripook.com
+      PGADMIN_DEFAULT_PASSWORD: admin123
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    networks:
+      - tripook-network
+    depends_on:
+      - postgres
+
+# Volumes
+volumes:
+  postgres_data:
+    driver: local
+  pgadmin_data:
+    driver: local
+  backend_logs:
+    driver: local
+
+# Networks
+networks:
+  tripook-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
