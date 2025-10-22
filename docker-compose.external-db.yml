@@ -1,0 +1,67 @@
+# ====================================
+# Docker Compose for Tripook Development (External Database)
+# ====================================
+
+version: '3.8'
+
+services:
+  # Backend Service (sử dụng external PostgreSQL)
+  backend:
+    build:
+      context: ./tripook-backend
+      dockerfile: Dockerfile
+    container_name: tripook-backend
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      SPRING_DATASOURCE_URL: jdbc:postgresql://host.docker.internal:5432/tripook_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: Tdat100524
+      JAVA_OPTS: "-Xmx1g -Xms512m"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - tripook-network
+    volumes:
+      - backend_logs:/app/logs
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # Frontend Service
+  frontend:
+    build:
+      context: ./tripook-frontend
+      dockerfile: Dockerfile
+    container_name: tripook-frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - tripook-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+# Volumes
+volumes:
+  backend_logs:
+    driver: local
+
+# Networks
+networks:
+  tripook-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
