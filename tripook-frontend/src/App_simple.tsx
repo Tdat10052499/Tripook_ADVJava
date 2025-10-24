@@ -34,30 +34,24 @@ const App: React.FC = () => {
             alignItems: 'center', 
             gap: '2rem' 
           }}>
-            <button style={{ 
+            <a href="#" style={{ 
               color: '#4b5563', 
-              background: 'none',
-              border: 'none',
-              cursor: 'pointer'
+              textDecoration: 'none' 
             }}>
               Trang chủ
-            </button>
-            <button style={{ 
+            </a>
+            <a href="#" style={{ 
               color: '#4b5563', 
-              background: 'none',
-              border: 'none',
-              cursor: 'pointer'
+              textDecoration: 'none' 
             }}>
               Điểm đến
-            </button>
-            <button style={{ 
+            </a>
+            <a href="#" style={{ 
               color: '#4b5563', 
-              background: 'none',
-              border: 'none',
-              cursor: 'pointer'
+              textDecoration: 'none' 
             }}>
               Chuyến đi
-            </button>
+            </a>
           </div>
           
           <div style={{ 
@@ -65,24 +59,21 @@ const App: React.FC = () => {
             alignItems: 'center', 
             gap: '1rem' 
           }}>
-            <button style={{ 
+            <a href="#" style={{ 
               color: '#4b5563', 
-              background: 'none',
-              border: 'none',
-              cursor: 'pointer'
+              textDecoration: 'none' 
             }}>
               Đăng nhập
-            </button>
-            <button style={{ 
+            </a>
+            <a href="#" style={{ 
               backgroundColor: '#2563eb', 
               color: 'white', 
               padding: '0.5rem 1rem', 
               borderRadius: '0.5rem', 
-              border: 'none',
-              cursor: 'pointer'
+              textDecoration: 'none' 
             }}>
               Đăng ký
-            </button>
+            </a>
           </div>
         </nav>
       </header>
@@ -265,15 +256,13 @@ const App: React.FC = () => {
                         4.8 (120 đánh giá)
                       </span>
                     </div>
-                    <button style={{ 
+                    <a href="#" style={{ 
                       color: '#2563eb', 
                       fontWeight: '600', 
-                      background: 'none',
-                      border: 'none',
-                      cursor: 'pointer'
+                      textDecoration: 'none' 
                     }}>
                       Xem chi tiết →
-                    </button>
+                    </a>
                   </div>
                 </div>
               </div>
