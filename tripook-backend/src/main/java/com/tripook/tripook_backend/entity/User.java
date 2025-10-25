@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -21,9 +20,6 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @Column(unique = true, nullable = false, length = 50)
-    private String username;
-    
     @Column(unique = true, nullable = false, length = 100)
     private String email;
     
@@ -36,31 +32,36 @@ public class User {
     @Column(length = 20)
     private String phone;
     
-    @Column(name = "avatar_url", length = 500)
-    private String avatarUrl;
-    
     @Enumerated(EnumType.STRING)
     @Column(length = 20)
     private Role role = Role.USER;
     
-    @Column(name = "is_active")
-    private Boolean isActive = true;
+    @Enumerated(EnumType.STRING)
+    @Column(length = 20)
+    private Status status = Status.ACTIVE;
     
     @CreationTimestamp
     @Column(name = "created_at")
     private LocalDateTime createdAt;
     
-    @UpdateTimestamp
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
+    // Relationships
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Booking> bookings;
     
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Trip> trips;
+    private List<Favorite> favorites;
+    
+    @OneToMany(mappedBy = "provider", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Listing> providedListings;
     
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<TripReview> reviews;
+    private List<Review> reviews;
     
     public enum Role {
-        USER, ADMIN
+        USER, ADMIN, PROVIDER
+    }
+    
+    public enum Status {
+        ACTIVE, INACTIVE, SUSPENDED
     }
 }
